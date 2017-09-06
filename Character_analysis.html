@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eurasia大数据分析平台</title>
+    <script typet="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <script src="http://echarts.baidu.com/build/dist/echarts-all.js"></script>
+    <script language="javascript">
+        //        禁止浏览器缩放
+        var scrollFunc=function(e){
+            e=e || window.event;
+            if(e.wheelDelta && event.ctrlKey){//IE/Opera/Chrome
+                event.returnValue=false;
+            }else if(e.detail){//Firefox
+                event.returnValue=false;
+            }
+        };
+        /*注册事件*/
+        if(document.addEventListener){
+            document.addEventListener('DOMMouseScroll',scrollFunc,false);
+        }//W3C
+        window.onmousewheel=document.onmousewheel=scrollFunc;//IE/Opera/Chrome/Safari
+        //        动态设置高度
+        $(function () {
+            var height = $(window).height();
+            $("body").height(height);
+        })
+    </script>
+    <style>
+        /*全局css*/
+        body, html {
+            width: 100%;
+            height: 100%;
+            background: url("img/body_bg.png");
+            background-size: 100% 100%;
+            zoom: 100%;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        /*头部*/
+        header {
+            height:13%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        header img{
+            width: 50%;
+            position: absolute;
+            margin-top: 10px
+        }
+
+
+        /*主内容*/
+        .main_content{
+            display: flex;
+            justify-content: space-around;
+            height: 87%;
+            border: 0px solid white;
+            margin-top: -1%;
+        }
+        /*左内容*/
+        .left_content{
+            width: 25%;
+            height: 100%;
+            border: 1px solid #0b6379;
+        }
+        /*右内容*/
+        .right_content{
+            width: 70%;
+            height: 100%;
+            border: 1px solid #0b6379;
+        }
+        /*右内容四个图表*/
+        #main,#main1,#main2,#main3{
+            float: left;
+            margin-left: 1.9%;
+            margin-top:2.6%;
+            border: 2px solid #03356E;
+            width: 47%;
+            height: 43%;
+        }
+        /*左半部分上*/
+        .left_node_up{
+            width: 100%;
+            height: 50%;
+            border: 0px solid white;
+        }
+        /*左半部分下*/
+        .left_node_down{
+            width: 100%;
+            height: 36%;
+            margin-top: 20%;
+            border-top: 1px solid white;
+        }
+        /*搜索*/
+        .search{
+            width: 100%;
+        }
+        .search_input{
+            width: 70%;
+            margin-left:3%;
+            height: 25px;
+            border-radius: 30px 0 0 30px;
+            border-top: 1px solid #54DFE3;
+            border-right: 1px solid #04070E;
+            border-bottom: 1px solid #54DFE3;
+            border-left: 1px solid #54DFE3;
+            background-color:transparent;
+            margin-top: 20px;
+            padding-left: 20px;
+            color: white;
+        }
+        .search_button{
+            width: 20%;
+            height: 27px;
+            background-color:#071B40;
+            border-top: 1px solid #54DFE3;
+            border-right: 1px solid #54DFE3;
+            border-bottom: 1px solid #54DFE3;
+            border-left: 1px solid #04070E;
+            border-radius: 0 30px 30px 0;
+            color: white;
+            margin-left: -8px;
+            line-height: 25px;
+        }
+        /*左半部分头像和个人信息*/
+        .stu_info{
+            width: 100%;
+            margin: 10px 0 0 0;
+            height: 47%;
+            border: 0px solid red;
+            display: flex;
+            justify-content: space-around;
+        }
+        .stu_infos{
+            color: #54DFE3;
+            border: 1px solid white;
+            height: 100%;
+            width: 60%;
+        }
+        .stu_head{
+            width: 30%;
+            height: 100%;
+        }
+        .stu_head img{
+            width: 100%;
+            height: 100%;
+            border: 1px solid white;
+        }
+        /*搜索条件*/
+        .search_tj{
+            width: 100%;
+            color: white;
+            border: 0px solid white;
+            height: 38%;
+            margin-top: 5%;
+        }
+        .search_tj input,.search_tj select{
+            width: 32%;
+            border: 1px solid #54DFE3;
+            background: transparent;
+            height: 20px;
+            color: #54DFE3;
+        }
+        .search_tj span{
+            margin-left: 2.5%;
+        }
+        /*确定查询按钮*/
+        .ok_query{
+            display: flex;
+            justify-content: center;
+        }
+        .ok_query button{
+            height: 30px;
+            width: 100px;
+            border: 1px solid #54DFE3;
+            border-radius: 30px;
+            background: transparent;
+            color: #54DFE3;
+            line-height: 30px;
+        }
+        /*表格*/
+        tr,td{
+            border: 1px solid #54DFE3;
+            color: white;
+            height: 10%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="https://img.alicdn.com/tps/TB1Pg3pPXXXXXcxXpXXXXXXXXXX-1920-1080.gif" alt="">
+    <h2 style="margin-top: -50px;color: white">Eurasia学生数据分析平台</h2>
+</header>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div class="main_content">
+    <div class="left_content" style="position: relative">
+        <!--四个角加粗-->
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 5px 0 0 5px;
+        top:-5px;
+        left:-5px;"></span>
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 5px 5px 0 0;
+        top:-5px;
+        right:-5px;"></span>
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 0px 5px 5px 0;
+        bottom:-5px;
+        right:-5px;"></span>
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 0px 0px 5px 5px;
+        bottom:-5px;
+        left:-5px;"></span>
+        <div class="left_node_up">
+            <!--搜索框-->
+            <div class="search">
+                <input type="text" placeholder="请输入学生姓名或学号" class="search_input">
+                <button class="search_button">搜索</button>
+            </div>
+            <!--头像图片和个人信息-->
+            <div class="stu_info">
+                <div class="stu_head">
+                    <img src="./img/hs.jpg" alt="">
+                </div>
+                <div class="stu_infos">
+                    <span style=" position:absolute;margin: 2% 0 0 3%;">姓名：唐嫣</span>
+                    <span  style=" position:absolute;margin:2% 0 0 30%;">年级：2014级</span><br>
+                    <span style="position:absolute;margin: 4% 0 0 3%;">专业：软件工程</span>
+                    <span style="position:absolute;margin: 4% 0 0 40%;">年龄：24</span>
+                    <br>
+                    <span style="position:absolute;margin: 6% 0 0 3%"> 分院：信息工程学院</span><br>
+                    <span style="position:absolute;margin: 8% 0 0 3%">社区：国际青年社区</span><br>
+                    <span style="position:absolute;margin: 10% 0 0 3%">职务：学生干部</span>
+                </div>
+            </div>
+            <!--搜索查询条件-->
+            <div class="search_tj">
+                <p>
+                    <span>
+                        年级：<select>
+                                <option>2014级</option>
+                                <option>2015级</option>
+                                <option>2016级</option>
+                                <option>2017级</option>
+                              </select>
+                    </span>
+                    <span>
+                        分院：<select>
+                                <option>信息工程学院</option>
+                                <option>会计学院</option>
+                              </select>
+                    </span>
+                </p><br>
+                <p>
+                    <span>
+                        专业：<select>
+                                <option>软件工程</option>
+                                <option>通信工程</option>
+                              </select>
+                    </span>
+                    <span>
+                        社区：<select>
+                                <option>第一社区</option>
+                                <option>第二社区</option>
+                                <option>第三社区</option>
+                              </select>
+                    </span>
+                </p><br>
+                <p>
+                    <span>学号：<input type="text" placeholder="输入学号"></span>
+                    <span>
+                        性别：<select>
+                                <option>男</option>
+                                <option>女</option>
+                              </select>
+                    </span>
+                </p>
+            </div>
+            <!--查询按钮-->
+            <div class="ok_query">
+                <button>确认查询</button>
+            </div>
+        </div>
+        <!--左下半部分表格-->
+        <div class="left_node_down">
+            <h2 style="color: #54DFE3;font-size: 20px;text-align: center;margin-top: 10px">最近一个月消费记录</h2>
+            <table width="90%" height="70%" style="margin-left: 5%;margin-top: 20px" cellspacing="0">
+                <tr>
+                    <td></td>
+                    <td>支付方式</td>
+                    <td>消费地点</td>
+                    <td>消费金额</td>
+                </tr>
+                <tr>
+                    <td>一月</td>
+                    <td>一卡通</td>
+                    <td>餐饮</td>
+                    <td>￥1023.00</td>
+                </tr>
+                <tr>
+                    <td>一月</td>
+                    <td>一卡通</td>
+                    <td>金桥</td>
+                    <td>￥1223.00</td>
+                </tr>
+                <tr>
+                    <td>一月</td>
+                    <td>一卡通</td>
+                    <td>商业街</td>
+                    <td>￥1123.00</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="right_content" style="position: relative">
+        <!--四个角加粗-->
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 5px 0 0 5px;
+        top:-5px;
+        left:-5px;"></span>
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 5px 5px 0 0;
+        top:-5px;
+        right:-5px;"></span>
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 0px 5px 5px 0;
+        bottom:-5px;
+        right:-5px;"></span>
+        <span style="position: absolute;
+        padding:15px;
+        border-style: solid;
+        border-color: #02C2E1;
+        border-width: 0px 0px 5px 5px;
+        bottom:-5px;
+        left:-5px;"></span>
+        <!--四个图表位置-->
+        <div id="main" style=""></div>
+        <div id="main1" style=""></div>
+        <div id="main2"></div>
+        <div id="main3"></div>
+    </div>
+</div>
+<!--main-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts图表
+    var myChart = echarts.init(document.getElementById('main'));
+
+    var option = {
+        title : {
+            text: '学生消费情况',
+            subtext: '模拟数据',
+            x:'right',
+            y:'bottom',
+            textStyle : {
+                color: 'white'
+            }
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient : 'vertical',
+            x : 'left',
+            data:['餐饮','商业街','金桥餐厅','EU酒店','门诊']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : false,
+        series : (function (){
+            var series = [];
+            for (var i = 0; i < 30; i++) {
+                series.push({
+                    name:'消费记录',
+                    type:'pie',
+                    itemStyle : {normal : {
+                        label : {show : i > 28},
+                        labelLine : {show : i > 28, length:20}
+                    }},
+                    radius : [i * 4 + 40, i * 4 + 43],
+                    data:[
+                        {value: i * 128 + 80,  name:'餐饮'},
+                        {value: i * 64  + 160,  name:'商业街'},
+                        {value: i * 32  + 320,  name:'金桥餐厅'},
+                        {value: i * 16  + 640,  name:'EU酒店'},
+                        {value: i * 8  + 1280, name:'门诊'}
+                    ]
+                })
+            }
+            series[0].markPoint = {
+                symbol:'emptyCircle',
+                symbolSize:series[0].radius[0],
+                effect:{show:true,scaleSize:12,color:'rgba(250,225,50,0.8)',shadowBlur:10,period:30},
+                data:[{x:'50%',y:'50%'}]
+            };
+            return series;
+        })()
+    };
+    setTimeout(function (){
+        var _ZR = myChart.getZrender();
+        var TextShape = require('zrender/shape/Text');
+        // 补充千层饼
+        _ZR.addShape(new TextShape({
+            style : {
+                x : _ZR.getWidth() / 2,
+                y : _ZR.getHeight() / 2,
+                color: '#fff',
+                text : '恶梦的过去',
+                textAlign : 'center'
+            }
+        }));
+        _ZR.addShape(new TextShape({
+            style : {
+                x : _ZR.getWidth() / 2 + 200,
+                y : _ZR.getHeight() / 2,
+                brushType:'fill',
+                color: '#fff',
+                text : '美好的未来',
+                textAlign : 'left',
+                textFont:'normal 20px 微软雅黑'
+            }
+        }));
+        _ZR.refresh();
+    }, 2000);
+
+
+    // 为echarts对象加载数据
+    myChart.setOption(option);
+</script>
+<!--main1-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts图表
+    var myChart = echarts.init(document.getElementById('main1'));
+
+    var placeList = [
+        {name:'海门', geoCoord:[121.15, 31.89]},
+        {name:'鄂尔多斯', geoCoord:[109.781327, 39.608266]},
+        {name:'招远', geoCoord:[120.38, 37.35]},
+        {name:'舟山', geoCoord:[122.207216, 29.985295]},
+        {name:'齐齐哈尔', geoCoord:[123.97, 47.33]},
+        {name:'盐城', geoCoord:[120.13, 33.38]},
+        {name:'赤峰', geoCoord:[118.87, 42.28]},
+        {name:'青岛', geoCoord:[120.33, 36.07]},
+        {name:'乳山', geoCoord:[121.52, 36.89]},
+        {name:'金昌', geoCoord:[102.188043, 38.520089]},
+        {name:'泉州', geoCoord:[118.58, 24.93]},
+        {name:'莱西', geoCoord:[120.53, 36.86]},
+        {name:'日照', geoCoord:[119.46, 35.42]},
+        {name:'胶南', geoCoord:[119.97, 35.88]},
+        {name:'南通', geoCoord:[121.05, 32.08]},
+        {name:'拉萨', geoCoord:[91.11, 29.97]},
+        {name:'云浮', geoCoord:[112.02, 22.93]},
+        {name:'梅州', geoCoord:[116.1, 24.55]},
+        {name:'文登', geoCoord:[122.05, 37.2]},
+        {name:'上海', geoCoord:[121.48, 31.22]},
+        {name:'攀枝花', geoCoord:[101.718637, 26.582347]},
+        {name:'威海', geoCoord:[122.1, 37.5]},
+        {name:'承德', geoCoord:[117.93, 40.97]},
+        {name:'厦门', geoCoord:[118.1, 24.46]},
+        {name:'汕尾', geoCoord:[115.375279, 22.786211]},
+        {name:'潮州', geoCoord:[116.63, 23.68]},
+        {name:'丹东', geoCoord:[124.37, 40.13]},
+        {name:'太仓', geoCoord:[121.1, 31.45]},
+        {name:'曲靖', geoCoord:[103.79, 25.51]},
+        {name:'烟台', geoCoord:[121.39, 37.52]},
+        {name:'福州', geoCoord:[119.3, 26.08]},
+        {name:'瓦房店', geoCoord:[121.979603, 39.627114]},
+        {name:'即墨', geoCoord:[120.45, 36.38]},
+        {name:'抚顺', geoCoord:[123.97, 41.97]},
+        {name:'玉溪', geoCoord:[102.52, 24.35]},
+        {name:'张家口', geoCoord:[114.87, 40.82]},
+        {name:'阳泉', geoCoord:[113.57, 37.85]},
+        {name:'莱州', geoCoord:[119.942327, 37.177017]},
+        {name:'湖州', geoCoord:[120.1, 30.86]},
+        {name:'汕头', geoCoord:[116.69, 23.39]},
+        {name:'昆山', geoCoord:[120.95, 31.39]},
+        {name:'宁波', geoCoord:[121.56, 29.86]},
+        {name:'湛江', geoCoord:[110.359377, 21.270708]},
+        {name:'揭阳', geoCoord:[116.35, 23.55]},
+        {name:'荣成', geoCoord:[122.41, 37.16]},
+        {name:'连云港', geoCoord:[119.16, 34.59]},
+        {name:'葫芦岛', geoCoord:[120.836932, 40.711052]},
+        {name:'常熟', geoCoord:[120.74, 31.64]},
+        {name:'东莞', geoCoord:[113.75, 23.04]},
+        {name:'河源', geoCoord:[114.68, 23.73]},
+        {name:'淮安', geoCoord:[119.15, 33.5]},
+        {name:'泰州', geoCoord:[119.9, 32.49]},
+        {name:'南宁', geoCoord:[108.33, 22.84]},
+        {name:'营口', geoCoord:[122.18, 40.65]},
+        {name:'惠州', geoCoord:[114.4, 23.09]},
+        {name:'江阴', geoCoord:[120.26, 31.91]},
+        {name:'蓬莱', geoCoord:[120.75, 37.8]},
+        {name:'韶关', geoCoord:[113.62, 24.84]},
+        {name:'嘉峪关', geoCoord:[98.289152, 39.77313]},
+        {name:'广州', geoCoord:[113.23, 23.16]},
+        {name:'延安', geoCoord:[109.47, 36.6]},
+        {name:'太原', geoCoord:[112.53, 37.87]},
+        {name:'清远', geoCoord:[113.01, 23.7]},
+        {name:'中山', geoCoord:[113.38, 22.52]},
+        {name:'昆明', geoCoord:[102.73, 25.04]},
+        {name:'寿光', geoCoord:[118.73, 36.86]},
+        {name:'盘锦', geoCoord:[122.070714, 41.119997]},
+        {name:'长治', geoCoord:[113.08, 36.18]},
+        {name:'深圳', geoCoord:[114.07, 22.62]},
+        {name:'珠海', geoCoord:[113.52, 22.3]},
+        {name:'宿迁', geoCoord:[118.3, 33.96]},
+        {name:'咸阳', geoCoord:[108.72, 34.36]},
+        {name:'铜川', geoCoord:[109.11, 35.09]},
+        {name:'平度', geoCoord:[119.97, 36.77]},
+        {name:'佛山', geoCoord:[113.11, 23.05]},
+        {name:'海口', geoCoord:[110.35, 20.02]},
+        {name:'江门', geoCoord:[113.06, 22.61]},
+        {name:'章丘', geoCoord:[117.53, 36.72]},
+        {name:'肇庆', geoCoord:[112.44, 23.05]},
+        {name:'大连', geoCoord:[121.62, 38.92]},
+        {name:'临汾', geoCoord:[111.5, 36.08]},
+        {name:'吴江', geoCoord:[120.63, 31.16]},
+        {name:'石嘴山', geoCoord:[106.39, 39.04]},
+        {name:'沈阳', geoCoord:[123.38, 41.8]},
+        {name:'苏州', geoCoord:[120.62, 31.32]},
+        {name:'茂名', geoCoord:[110.88, 21.68]},
+        {name:'嘉兴', geoCoord:[120.76, 30.77]},
+        {name:'长春', geoCoord:[125.35, 43.88]},
+        {name:'胶州', geoCoord:[120.03336, 36.264622]},
+        {name:'银川', geoCoord:[106.27, 38.47]},
+        {name:'张家港', geoCoord:[120.555821, 31.875428]},
+        {name:'三门峡', geoCoord:[111.19, 34.76]},
+        {name:'锦州', geoCoord:[121.15, 41.13]},
+        {name:'南昌', geoCoord:[115.89, 28.68]},
+        {name:'柳州', geoCoord:[109.4, 24.33]},
+        {name:'三亚', geoCoord:[109.511909, 18.252847]},
+        {name:'自贡', geoCoord:[104.778442, 29.33903]},
+        {name:'吉林', geoCoord:[126.57, 43.87]},
+        {name:'阳江', geoCoord:[111.95, 21.85]},
+        {name:'泸州', geoCoord:[105.39, 28.91]},
+        {name:'西宁', geoCoord:[101.74, 36.56]},
+        {name:'宜宾', geoCoord:[104.56, 29.77]},
+        {name:'呼和浩特', geoCoord:[111.65, 40.82]},
+        {name:'成都', geoCoord:[104.06, 30.67]},
+        {name:'大同', geoCoord:[113.3, 40.12]},
+        {name:'镇江', geoCoord:[119.44, 32.2]},
+        {name:'桂林', geoCoord:[110.28, 25.29]},
+        {name:'张家界', geoCoord:[110.479191, 29.117096]},
+        {name:'宜兴', geoCoord:[119.82, 31.36]},
+        {name:'北海', geoCoord:[109.12, 21.49]},
+        {name:'西安', geoCoord:[108.95, 34.27]},
+        {name:'金坛', geoCoord:[119.56, 31.74]},
+        {name:'东营', geoCoord:[118.49, 37.46]},
+        {name:'牡丹江', geoCoord:[129.58, 44.6]},
+        {name:'遵义', geoCoord:[106.9, 27.7]},
+        {name:'绍兴', geoCoord:[120.58, 30.01]},
+        {name:'扬州', geoCoord:[119.42, 32.39]},
+        {name:'常州', geoCoord:[119.95, 31.79]},
+        {name:'潍坊', geoCoord:[119.1, 36.62]},
+        {name:'重庆', geoCoord:[106.54, 29.59]},
+        {name:'台州', geoCoord:[121.420757, 28.656386]},
+        {name:'南京', geoCoord:[118.78, 32.04]},
+        {name:'滨州', geoCoord:[118.03, 37.36]},
+        {name:'贵阳', geoCoord:[106.71, 26.57]},
+        {name:'无锡', geoCoord:[120.29, 31.59]},
+        {name:'本溪', geoCoord:[123.73, 41.3]},
+        {name:'克拉玛依', geoCoord:[84.77, 45.59]},
+        {name:'渭南', geoCoord:[109.5, 34.52]},
+        {name:'马鞍山', geoCoord:[118.48, 31.56]},
+        {name:'宝鸡', geoCoord:[107.15, 34.38]},
+        {name:'焦作', geoCoord:[113.21, 35.24]},
+        {name:'句容', geoCoord:[119.16, 31.95]},
+        {name:'北京', geoCoord:[116.46, 39.92]},
+        {name:'徐州', geoCoord:[117.2, 34.26]},
+        {name:'衡水', geoCoord:[115.72, 37.72]},
+        {name:'包头', geoCoord:[110, 40.58]},
+        {name:'绵阳', geoCoord:[104.73, 31.48]},
+        {name:'乌鲁木齐', geoCoord:[87.68, 43.77]},
+        {name:'枣庄', geoCoord:[117.57, 34.86]},
+        {name:'杭州', geoCoord:[120.19, 30.26]},
+        {name:'淄博', geoCoord:[118.05, 36.78]},
+        {name:'鞍山', geoCoord:[122.85, 41.12]},
+        {name:'溧阳', geoCoord:[119.48, 31.43]},
+        {name:'库尔勒', geoCoord:[86.06, 41.68]},
+        {name:'安阳', geoCoord:[114.35, 36.1]},
+        {name:'开封', geoCoord:[114.35, 34.79]},
+        {name:'济南', geoCoord:[117, 36.65]},
+        {name:'德阳', geoCoord:[104.37, 31.13]},
+        {name:'温州', geoCoord:[120.65, 28.01]},
+        {name:'九江', geoCoord:[115.97, 29.71]},
+        {name:'邯郸', geoCoord:[114.47, 36.6]},
+        {name:'临安', geoCoord:[119.72, 30.23]},
+        {name:'兰州', geoCoord:[103.73, 36.03]},
+        {name:'沧州', geoCoord:[116.83, 38.33]},
+        {name:'临沂', geoCoord:[118.35, 35.05]},
+        {name:'南充', geoCoord:[106.110698, 30.837793]},
+        {name:'天津', geoCoord:[117.2, 39.13]},
+        {name:'富阳', geoCoord:[119.95, 30.07]},
+        {name:'泰安', geoCoord:[117.13, 36.18]},
+        {name:'诸暨', geoCoord:[120.23, 29.71]},
+        {name:'郑州', geoCoord:[113.65, 34.76]},
+        {name:'哈尔滨', geoCoord:[126.63, 45.75]},
+        {name:'聊城', geoCoord:[115.97, 36.45]},
+        {name:'芜湖', geoCoord:[118.38, 31.33]},
+        {name:'唐山', geoCoord:[118.02, 39.63]},
+        {name:'平顶山', geoCoord:[113.29, 33.75]},
+        {name:'邢台', geoCoord:[114.48, 37.05]},
+        {name:'德州', geoCoord:[116.29, 37.45]},
+        {name:'济宁', geoCoord:[116.59, 35.38]},
+        {name:'荆州', geoCoord:[112.239741, 30.335165]},
+        {name:'宜昌', geoCoord:[111.3, 30.7]},
+        {name:'义乌', geoCoord:[120.06, 29.32]},
+        {name:'丽水', geoCoord:[119.92, 28.45]},
+        {name:'洛阳', geoCoord:[112.44, 34.7]},
+        {name:'秦皇岛', geoCoord:[119.57, 39.95]},
+        {name:'株洲', geoCoord:[113.16, 27.83]},
+        {name:'石家庄', geoCoord:[114.48, 38.03]},
+        {name:'莱芜', geoCoord:[117.67, 36.19]},
+        {name:'常德', geoCoord:[111.69, 29.05]},
+        {name:'保定', geoCoord:[115.48, 38.85]},
+        {name:'湘潭', geoCoord:[112.91, 27.87]},
+        {name:'金华', geoCoord:[119.64, 29.12]},
+        {name:'岳阳', geoCoord:[113.09, 29.37]},
+        {name:'长沙', geoCoord:[113, 28.21]},
+        {name:'衢州', geoCoord:[118.88, 28.97]},
+        {name:'廊坊', geoCoord:[116.7, 39.53]},
+        {name:'菏泽', geoCoord:[115.480656, 35.23375]},
+        {name:'合肥', geoCoord:[117.27, 31.86]},
+        {name:'武汉', geoCoord:[114.31, 30.52]},
+        {name:'大庆', geoCoord:[125.03, 46.58]}
+    ]
+    option = {
+        backgroundColor: '',
+        color: [
+            'rgba(255, 255, 255, 0.8)',
+            'rgba(14, 241, 242, 0.8)',
+            'rgba(37, 140, 249, 0.8)'
+        ],
+        title : {
+            text: '欧亚校园学生区域分布图',
+            subtext: '纯属虚构',
+            x:'center',
+            textStyle : {
+                color: '#fff'
+            }
+        },
+        legend: {
+            orient: 'vertical',
+            x:'left',
+            data:['强','中','弱'],
+            textStyle : {
+                color: '#fff'
+            }
+        },
+        toolbox: {
+            show : true,
+            orient : 'vertical',
+            x: 'right',
+            y: 'center',
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        series : [
+            {
+                name: '弱',
+                type: 'map',
+                mapType: 'china',
+                itemStyle:{
+                    normal:{
+                        borderColor:'rgba(100,149,237,1)',
+                        borderWidth:1.5,
+                        areaStyle:{
+                            color: '#1b1b1b'
+                        }
+                    }
+                },
+                data : [],
+                markPoint : {
+                    symbolSize: 2,
+                    large: true,
+                    effect : {
+                        show: true
+                    },
+                    data : (function(){
+                        var data = [];
+                        var len = 3000;
+                        var geoCoord
+                        while(len--) {
+                            geoCoord = placeList[len % placeList.length].geoCoord;
+                            data.push({
+                                name : placeList[len % placeList.length].name + len,
+                                value : 10,
+                                geoCoord : [
+                                    geoCoord[0] + Math.random() * 5 - 2.5,
+                                    geoCoord[1] + Math.random() * 3 - 1.5
+                                ]
+                            })
+                        }
+                        return data;
+                    })()
+                }
+            },
+            {
+                name: '中',
+                type: 'map',
+                mapType: 'china',
+                data : [],
+                markPoint : {
+                    symbolSize: 3,
+                    large: true,
+                    effect : {
+                        show: true
+                    },
+                    data : (function(){
+                        var data = [];
+                        var len = 1000;
+                        var geoCoord
+                        while(len--) {
+                            geoCoord = placeList[len % placeList.length].geoCoord;
+                            data.push({
+                                name : placeList[len % placeList.length].name + len,
+                                value : 50,
+                                geoCoord : [
+                                    geoCoord[0] + Math.random() * 5 - 2.5,
+                                    geoCoord[1] + Math.random() * 3 - 1.5
+                                ]
+                            })
+                        }
+                        return data;
+                    })()
+                }
+            },
+            {
+                name: '强',
+                type: 'map',
+                mapType: 'china',
+                hoverable: false,
+                roam:true,
+                data : [],
+                markPoint : {
+                    symbol : 'diamond',
+                    symbolSize: 6,
+                    large: true,
+                    effect : {
+                        show: true
+                    },
+                    data : (function(){
+                        var data = [];
+                        var len = placeList.length;
+                        while(len--) {
+                            data.push({
+                                name : placeList[len].name,
+                                value : 90,
+                                geoCoord : placeList[len].geoCoord
+                            })
+                        }
+                        return data;
+                    })()
+                }
+            }
+        ]
+    };
+
+
+    // 为echarts对象加载数据
+    myChart.setOption(option);
+</script>
+<!--main2-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts图表
+    var myChart = echarts.init(document.getElementById('main2'));
+
+
+    var option = {
+        backgroundColor: '',
+        color: ['gold','aqua','lime'],
+        title : {
+            text: '欧亚人迁徙',
+            subtext:'数据纯属虚构',
+            x:'center',
+            textStyle : {
+                color: '#fff'
+            }
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: '{b}'
+        },
+        legend: {
+            orient: 'vertical',
+            x:'left',
+            data:['北京', '上海', '广州'],
+            selectedMode: 'single',
+            selected:{
+                '上海' : false,
+                '广州' : false
+            },
+            textStyle : {
+                color: '#fff'
+            }
+        },
+        toolbox: {
+            show : true,
+            orient : 'vertical',
+            x: 'right',
+            y: 'center',
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        dataRange: {
+            min : 0,
+            max : 100,
+            calculable : true,
+            color: ['#ff3333', 'orange', 'yellow','lime','aqua'],
+            textStyle:{
+                color:'#fff'
+            }
+        },
+        animationDurationUpdate: 2000, // for update animation, like legend selected.
+        series : [
+            {
+                name: '北京',
+                type: 'map',
+                roam: true,
+                hoverable: false,
+                mapType: 'china',
+                itemStyle:{
+                    normal:{
+                        borderColor:'rgba(100,149,237,1)',
+                        borderWidth:0.5,
+                        areaStyle:{
+                            color: '#1b1b1b'
+                        }
+                    }
+                },
+                data:[],
+                geoCoord: {
+                    '上海': [121.4648,31.2891],
+                    '广州': [113.5107,23.2196],
+                    '北京': [116.4551,40.2539]
+                },
+                markLine : {
+                    smooth:true,
+                    effect : {
+                        show: true,
+                        scaleSize: 1,
+                        period: 30,
+                        color: '#fff',
+                        shadowBlur: 10
+                    },
+                    itemStyle : {
+                        normal: {
+                            borderWidth:1,
+                            label: {
+                                show: false
+                            },
+                            lineStyle: {
+                                type: 'solid',
+                                shadowBlur: 10
+                            }
+                        }
+                    },
+                    data : [
+                        [{name:'北京', smoothness:0.2}, {name:'广州',value:95}],
+                        [{name:'北京', smoothness:0.3}, {name:'广州',value:90}],
+                        [{name:'北京', smoothness:0.4}, {name:'广州',value:80}],
+                        [{name:'北京', smoothness:0.5}, {name:'广州',value:70}],
+                        [{name:'北京', smoothness:0.6}, {name:'广州',value:60}],
+                        [{name:'广州', smoothness:0.2}, {name:'北京',value:50}],
+                        [{name:'广州', smoothness:0.3}, {name:'北京',value:40}],
+                        [{name:'广州', smoothness:0.4}, {name:'北京',value:30}],
+                        [{name:'广州', smoothness:0.5}, {name:'北京',value:20}],
+                        [{name:'广州', smoothness:0.6}, {name:'北京',value:10}]
+                    ]
+                }
+            },
+            {
+                name: '上海',
+                type: 'map',
+                mapType: 'china',
+                data:[],
+                markLine : {
+                    smooth:true,
+                    effect : {
+                        show: true,
+                        scaleSize: 1,
+                        period: 30,
+                        color: '#fff',
+                        shadowBlur: 10
+                    },
+                    itemStyle : {
+                        normal: {
+                            borderWidth:1,
+                            label: {
+                                show: false
+                            },
+                            lineStyle: {
+                                type: 'solid',
+                                shadowBlur: 10
+                            }
+                        }
+                    },
+                    data : [
+                        [{name:'北京', smoothness:0.2}, {name:'上海',value:95}],
+                        [{name:'北京', smoothness:0.3}, {name:'上海',value:90}],
+                        [{name:'北京', smoothness:0.4}, {name:'上海',value:80}],
+                        [{name:'北京', smoothness:0.5}, {name:'上海',value:70}],
+                        [{name:'北京', smoothness:0.6}, {name:'上海',value:60}],
+                        [{name:'上海', smoothness:0.2}, {name:'北京',value:50}],
+                        [{name:'上海', smoothness:0.3}, {name:'北京',value:40}],
+                        [{name:'上海', smoothness:0.4}, {name:'北京',value:30}],
+                        [{name:'上海', smoothness:0.5}, {name:'北京',value:20}],
+                        [{name:'上海', smoothness:0.6}, {name:'北京',value:10}]
+                    ]
+                }
+            },
+            {
+                name: '广州',
+                type: 'map',
+                mapType: 'china',
+                data:[],
+                markLine : {
+                    smooth:true,
+                    effect : {
+                        show: true,
+                        scaleSize: 1,
+                        period: 30,
+                        color: '#fff',
+                        shadowBlur: 10
+                    },
+                    itemStyle : {
+                        normal: {
+                            borderWidth:1,
+                            label: {
+                                show: false
+                            },
+                            lineStyle: {
+                                type: 'solid',
+                                shadowBlur: 10
+                            }
+                        }
+                    },
+                    data : [
+                        [{name:'上海', smoothness:0.2}, {name:'广州',value:95}],
+                        [{name:'上海', smoothness:0.3}, {name:'广州',value:90}],
+                        [{name:'上海', smoothness:0.4}, {name:'广州',value:80}],
+                        [{name:'上海', smoothness:0.5}, {name:'广州',value:70}],
+                        [{name:'上海', smoothness:0.6}, {name:'广州',value:60}],
+                        [{name:'广州', smoothness:0.2}, {name:'上海',value:50}],
+                        [{name:'广州', smoothness:0.3}, {name:'上海',value:40}],
+                        [{name:'广州', smoothness:0.4}, {name:'上海',value:30}],
+                        [{name:'广州', smoothness:0.5}, {name:'上海',value:20}],
+                        [{name:'广州', smoothness:0.6}, {name:'上海',value:10}]
+                    ]
+                }
+            }
+        ]
+    };
+
+    // 为echarts对象加载数据
+    myChart.setOption(option);
+</script>
+<!--main3-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts图表
+    var myChart = echarts.init(document.getElementById('main3'));
+    var option = {
+        title : {
+            text: '预算 vs 开销（Budget vs spending）',
+            subtext: '纯属虚构',
+            textStyle : {
+                color: 'white'
+            }
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            orient : 'vertical',
+            x : 'right',
+            y : 'bottom',
+            data:['预算分配（Allocated Budget）','实际开销（Actual Spending）']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        polar : [
+            {
+                indicator : [
+                    { text: '销售（sales）', max: 6000},
+                    { text: '管理（Administration）', max: 16000},
+                    { text: '信息技术（Information Techology）', max: 30000},
+                    { text: '客服（Customer Support）', max: 38000},
+                    { text: '研发（Development）', max: 52000},
+                    { text: '市场（Marketing）', max: 25000}
+                ]
+            }
+        ],
+        calculable : true,
+        series : [
+            {
+                name: '预算 vs 开销（Budget vs spending）',
+                type: 'radar',
+                data : [
+                    {
+                        value : [4300, 10000, 28000, 35000, 50000, 19000],
+                        name : '预算分配（Allocated Budget）'
+                    },
+                    {
+                        value : [5000, 14000, 28000, 31000, 42000, 21000],
+                        name : '实际开销（Actual Spending）'
+                    }
+                ]
+            }
+        ]
+    };
+
+
+    // 为echarts对象加载数据
+    myChart.setOption(option);
+</script>
+</body>
+</html>
