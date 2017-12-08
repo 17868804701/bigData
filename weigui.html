@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="GBK">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #007aff;
+            color: white;
+            height: 45px;
+            width: 100%;
+            text-align: center;
+            line-height: 45px;
+            position: fixed;
+            top: 0;
+        }
+
+        .header_title {
+            width: 100%;
+            height: 40px;
+            background: #f0f0f0;
+            line-height: 40px;
+            color: #424242;
+            margin-top: 45px;
+        }
+
+        .header_title span {
+            margin-left: 3.5%;
+        }
+        .content{
+            width: 100%;
+            background: white;
+        }
+        .list{
+            width: 95%;
+            margin-left: 2.5%;
+            height: 45px;
+            line-height: 45px;
+            border-bottom: 1px solid #d9d9db;
+        }
+        .list span{
+            font-size: 16px;
+            color: #333333;
+            margin-left: 1%;
+        }
+        .list input{
+            height: 30px;
+            width: 65%;
+            border: 0;
+            font-size: 16px;
+            margin-left: 2%;
+        }
+        .btn{
+            height: 40px;
+            background:#007aff ;
+            width: 90%;
+            line-height: 40px;
+            border: 0px;
+            margin-left: 5%;
+            color: white;
+            margin-top: 20px;
+            border-radius: 5px;
+            margin-bottom: 80px;
+        }
+        .close{
+            display: inline-block;
+            margin-top: 7px;
+        }
+        #usercompanys{
+            width: 60%;
+            height: 30px;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form id="form1" action="" enctype="multipart/form-data" method="post">
+        <header>
+            详细信息
+            <a href="javascript:history.go(-1)" style="text-decoration:none; color:white;margin-top: -10px;position: absolute;margin-left: 33%">
+                <h2 class="close" style="font-size:1.3em; ">×</h2>
+            </a>
+        </header>
+        <div class="header_title">
+            <span>违规信息登记</span>
+        </div>
+        <div class="content">
+            <div class="list">
+                <input type='hidden' value="add" name='actiontype'>
+                <input type='hidden' name='fillpeoid' id='fillpeoid' value="<%=userid%>"/>
+                <input type='hidden' name='state' id='state' value="1"/>
+                <input type='hidden' name='starttime' id='starttime' value="<%=startTime%>"/>
+                <span>时间日期:</span>
+                <input type="date" name=startdate id=startdate value="">
+            </div>
+            <div class="list">
+                <span>驾驶员:</span>
+                <input type="text" name=username id=username value="">
+            </div>
+            <div class="list">
+                <span>路别:</span>
+                <input type="text"  name=highway id=highway value="">
+            </div>
+            <div class="list">
+                <span>车牌号:</span>
+                <input type="text"  name=carnum id=carnum value="">
+            </div>
+            <div class="list">
+                <span>所属公司:</span>
+                <select name="usercompanys" id="usercompanys" class="form-custom">
+                    <option value="">请选择公司</option>
+                    <option value="一公司">一公司</option>
+                    <option value="二公司">二公司</option>
+                    <option value="三公司">三公司</option>
+                    <option value="四公司">四公司</option>
+                    <option value="五公司">五公司</option>
+                    <option value="六公司">六公司</option>
+                </select>
+                <input type='hidden' name='usercomid' id='usercomid' value=""/>
+            </div>
+            <div class="list" style="height: 158px">
+                <span>违纪事由:</span> <br>
+                <textarea name="reson" style="width: 95%;margin-left: 2.5%;height: 100px" placeholder="请输入违纪事由" value=""></textarea>
+            </div>
+            <div class="list" style="height: 190px">
+                <span>上传照片(最多八张)</span> <br>
+                <input type="file" name=Appfile multiple="multiple" ><br>
+                <span>上传视频</span> <br>
+                <input type="file" name=Appfile>
+            </div>
+            <div class="list">
+                <span>填报人:</span>
+                <input type="text" name=fillpeo value="自己">
+            </div>
+            <div class="list">
+                <span>所属部门:</span>
+                <input type="text"  name=filldep value="技术部">
+            </div>
+            <div class="list">
+                <span>填报单位:</span>
+                <input type="text"  name=fillcom value="欧亚">
+            </div>
+            <input type="submit" onclick="baocun()" class="btn">
+        </div>
+    </form>
+</div>
+</body>
+</html>

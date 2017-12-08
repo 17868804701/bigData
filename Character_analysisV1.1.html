@@ -52,8 +52,6 @@
             position: absolute;
             margin-top: 10px
         }
-
-
         /*主内容*/
         .main_content{
             display: flex;
@@ -86,109 +84,13 @@
         /*左半部分上*/
         .left_node_up{
             width: 100%;
-            height: 50%;
-            border: 0px solid white;
-        }
-        /*左半部分下*/
-        .left_node_down{
-            width: 100%;
-            height: 36%;
-            margin-top: 20%;
-            border-top: 1px solid white;
-        }
-        /*搜索*/
-        .search{
-            width: 100%;
-        }
-        .search_input{
-            width: 70%;
-            margin-left:3%;
-            height: 25px;
-            border-radius: 30px 0 0 30px;
-            border-top: 1px solid #54DFE3;
-            border-right: 1px solid #04070E;
-            border-bottom: 1px solid #54DFE3;
-            border-left: 1px solid #54DFE3;
-            background-color:transparent;
-            margin-top: 20px;
-            padding-left: 20px;
-            color: white;
-        }
-        .search_button{
-            width: 20%;
-            height: 27px;
-            background-color:#071B40;
-            border-top: 1px solid #54DFE3;
-            border-right: 1px solid #54DFE3;
-            border-bottom: 1px solid #54DFE3;
-            border-left: 1px solid #04070E;
-            border-radius: 0 30px 30px 0;
-            color: white;
-            margin-left: -8px;
-            line-height: 25px;
-        }
-        /*左半部分头像和个人信息*/
-        .stu_info{
-            width: 100%;
-            margin: 10px 0 0 0;
-            height: 47%;
-            border: 0px solid red;
-            display: flex;
-            justify-content: space-around;
-        }
-        .stu_infos{
-            color: #54DFE3;
-            border: 1px solid white;
-            height: 100%;
-            width: 60%;
-        }
-        .stu_head{
-            width: 30%;
-            height: 100%;
-        }
-        .stu_head img{
-            width: 100%;
-            height: 100%;
+            height: 60%;
             border: 1px solid white;
         }
-        /*搜索条件*/
-        .search_tj{
+        .left_node_up_header{
+            height: 20%;
             width: 100%;
-            color: white;
-            border: 0px solid white;
-            height: 38%;
-            margin-top: 5%;
-        }
-        .search_tj input,.search_tj select{
-            width: 32%;
-            border: 1px solid #54DFE3;
-            background: transparent;
-            height: 20px;
-            color: #54DFE3;
-        }
-        .search_tj span{
-            margin-left: 2.5%;
-        }
-        /*确定查询按钮*/
-        .ok_query{
-            display: flex;
-            justify-content: center;
-        }
-        .ok_query button{
-            height: 30px;
-            width: 100px;
-            border: 1px solid #54DFE3;
-            border-radius: 30px;
-            background: transparent;
-            color: #54DFE3;
-            line-height: 30px;
-        }
-        /*表格*/
-        tr,td{
-            border: 1px solid #54DFE3;
-            color: white;
-            height: 10%;
-            text-align: center;
+            border: 1px solid white;
         }
     </style>
 </head>
@@ -229,105 +131,11 @@
         border-width: 0px 0px 5px 5px;
         bottom:-5px;
         left:-5px;"></span>
+
         <div class="left_node_up">
-            <!--搜索框-->
-            <div class="search">
-                <input type="text" placeholder="请输入学生姓名或学号" class="search_input">
-                <button class="search_button">搜索</button>
+            <div class="left_node_up_header">
+
             </div>
-            <!--头像图片和个人信息-->
-            <div class="stu_info">
-                <div class="stu_head">
-                    <img src="./img/hs.jpg" alt="">
-                </div>
-                <div class="stu_infos">
-                    <span style=" position:absolute;margin: 2% 0 0 3%;">姓名：唐嫣</span>
-                    <span  style=" position:absolute;margin:2% 0 0 30%;">年级：2014级</span><br>
-                    <span style="position:absolute;margin: 4% 0 0 3%;">专业：软件工程</span>
-                    <span style="position:absolute;margin: 4% 0 0 40%;">年龄：24</span>
-                    <br>
-                    <span style="position:absolute;margin: 6% 0 0 3%"> 分院：信息工程学院</span><br>
-                    <span style="position:absolute;margin: 8% 0 0 3%">社区：国际青年社区</span><br>
-                    <span style="position:absolute;margin: 10% 0 0 3%">职务：学生干部</span>
-                </div>
-            </div>
-            <!--搜索查询条件-->
-            <div class="search_tj">
-                <p>
-                    <span>
-                        年级：<select>
-                                <option>2014级</option>
-                                <option>2015级</option>
-                                <option>2016级</option>
-                                <option>2017级</option>
-                              </select>
-                    </span>
-                    <span>
-                        分院：<select>
-                                <option>信息工程学院</option>
-                                <option>会计学院</option>
-                              </select>
-                    </span>
-                </p><br>
-                <p>
-                    <span>
-                        专业：<select>
-                                <option>软件工程</option>
-                                <option>通信工程</option>
-                              </select>
-                    </span>
-                    <span>
-                        社区：<select>
-                                <option>第一社区</option>
-                                <option>第二社区</option>
-                                <option>第三社区</option>
-                              </select>
-                    </span>
-                </p><br>
-                <p>
-                    <span>学号：<input type="text" placeholder="输入学号"></span>
-                    <span>
-                        性别：<select>
-                                <option>男</option>
-                                <option>女</option>
-                              </select>
-                    </span>
-                </p>
-            </div>
-            <!--查询按钮-->
-            <div class="ok_query">
-                <button>确认查询</button>
-            </div>
-        </div>
-        <!--左下半部分表格-->
-        <div class="left_node_down">
-            <h2 style="color: #54DFE3;font-size: 20px;text-align: center;margin-top: 10px">最近一个月消费记录</h2>
-            <table width="90%" height="70%" style="margin-left: 5%;margin-top: 20px" cellspacing="0">
-                <tr>
-                    <td></td>
-                    <td>支付方式</td>
-                    <td>消费地点</td>
-                    <td>消费金额</td>
-                </tr>
-                <tr>
-                    <td>一月</td>
-                    <td>一卡通</td>
-                    <td>餐饮</td>
-                    <td>￥1023.00</td>
-                </tr>
-                <tr>
-                    <td>一月</td>
-                    <td>一卡通</td>
-                    <td>金桥</td>
-                    <td>￥1223.00</td>
-                </tr>
-                <tr>
-                    <td>一月</td>
-                    <td>一卡通</td>
-                    <td>商业街</td>
-                    <td>￥1123.00</td>
-                </tr>
-            </table>
         </div>
     </div>
     <div class="right_content" style="position: relative">
